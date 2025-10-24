@@ -1,0 +1,15 @@
+{
+  "name": "duitku-node-demo",
+  "version": "1.0.0",
+  "description": "Demo integrasi Duitku dengan Node.js dan frontend HTML + Tailwind",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "node-fetch": "^2.6.12"
+  }
+}

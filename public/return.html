@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Hasil Pembayaran</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
+  <div class="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md text-center">
+    <h2 class="text-2xl font-bold mb-3 text-gray-800">Hasil Pembayaran</h2>
+    <p id="status" class="text-lg text-gray-600 mb-4">Memeriksa status transaksi...</p>
+
+    <button id="back" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+      Kembali ke Checkout
+    </button>
+  </div>
+
+  <script>
+    const statusEl = document.getElementById('status');
+    const params = new URLSearchParams(window.location.search);
+
+    const statusCode = params.get('statusCode');
+    const orderId = params.get('merchantOrderId');
+
+    if (statusCode === '00') {
+      statusEl.innerText = `✅ Pembayaran berhasil untuk pesanan ${orderId}`;
+      statusEl.classList.add('text-green-600');
+    } else if (statusCode) {
+      statusEl.innerText = `❌ Pembayaran gagal (${statusCode})`;
+      statusEl.classList.add('text-red-600');
+    } else {
+      statusEl.innerText = 'Menunggu konfirmasi dari server...';
+    }
+
+    document.getElementById('back').addEventListener('click', () => {
+      window.location.href = '/checkout.html';
+    });
+  </script>
+</body>
+</html>

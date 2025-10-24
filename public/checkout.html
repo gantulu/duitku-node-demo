@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Checkout Duitku Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
+  <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md">
+    <h2 class="text-2xl font-bold text-center mb-4">Checkout Pembayaran</h2>
+    
+    <div class="space-y-3">
+      <label class="block">
+        <span class="text-gray-700">Nama Pelanggan</span>
+        <input id="customerName" type="text" placeholder="Nama kamu" class="mt-1 w-full border rounded p-2"/>
+      </label>
+
+      <label class="block">
+        <span class="text-gray-700">Deskripsi Produk</span>
+        <input id="productDetails" type="text" placeholder="Contoh: Topup saldo" class="mt-1 w-full border rounded p-2"/>
+      </label>
+
+      <label class="block">
+        <span class="text-gray-700">Jumlah Pembayaran (IDR)</span>
+        <input id="amount" type="number" value="10000" class="mt-1 w-full border rounded p-2"/>
+      </label>
+    </div>
+
+    <button id="pay" class="w-full mt-6 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">Bayar Sekarang</button>
+    <p id="status" class="text-center text-sm text-gray-600 mt-4"></p>
+  </div>
+
+  <script>
+    const payBtn = document.getElementById('pay');
+    const statusText = document.getElementById('status');
+
+    payBtn.addEventListener('click', async () => {
+      payBtn.disabled = true;
+      statusText.innerText = 'Memproses pembayaran...';
+
+      const amount = document.getElementById('amount').value;
+      const productDetails = document.getElementById('productDetails').value || 'Pembelian Produk';
+      const customerName = document.getElementById('customerName').value || 'Pelanggan';
+      const returnUrl = window.location.origin + '/return.html';
+      const callbackUrl = window.location.origin + '/callback';
+
+      const res = await fetch('/create-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount, productDetails, customerName, returnUrl, callbackUrl })
+      });
+
+      const json = await res.json();
+      console.log(json);
+
+      if (!json.success) {
+        statusText.innerText = 'Gagal membuat transaksi.';
+        payBtn.disabled = false;
+        return;
+      }
+
+      const paymentUrl = json.data.paymentUrl || json.data.paymentUrlRedirect || json.data.payment_url;
+      if (paymentUrl) {
+        statusText.innerText = 'Mengalihkan ke halaman pembayaran...';
+        window.location.href = paymentUrl;
+      } else {
+        statusText.innerText = 'Tidak ada URL pembayaran dari Duitku.';
+      }
+    });
+  </script>
+</body>
+</html>
